@@ -8,7 +8,9 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev \
+  && npm rebuild sqlite3 --build-from-source \
+  && npm cache clean --force
 
 COPY . .
 RUN mkdir -p /data \
