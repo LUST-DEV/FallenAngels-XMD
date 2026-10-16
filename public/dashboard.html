@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <title>Fallen Angels — Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <main class="dashboard shell">
+    <nav class="site-nav dashboard-nav" aria-label="Dashboard navigation">
+      <a class="wordmark" href="/"><span aria-hidden="true">✦</span> FALLEN ANGELS</a>
+      <div class="site-nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#activity">Activity</a>
+        <a href="#sessions">Sessions</a>
+        <a href="#logs">Logs</a>
+      </div>
+      <button id="logout" class="nav-action logout-button" type="button">Log out <span aria-hidden="true">↗</span></button>
+    </nav>
+    <header id="overview" class="dashboard-heading">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-mark"></span> PRIVATE CONTROL ROOM</p>
+        <h1>Overview<span>.</span></h1>
+        <p class="muted">Session health, system activity, and your connected community.</p>
+      </div>
+      <figure class="dashboard-art">
+        <img src="./assets/tagall.jpg" alt="Monochrome ornamental eye artwork">
+        <figcaption>FIELD NOTES · 002</figcaption>
+      </figure>
+    </header>
+    <p id="dashboard-message" class="form-message" role="status" aria-live="polite"></p>
+    <section class="stat-grid" aria-label="Statistics">
+      <article class="stat-card"><span class="stat-label"><i aria-hidden="true">◉</i> CONNECTED USERS</span><strong id="users-count">—</strong><span class="stat-note">Registered sessions</span></article>
+      <article class="stat-card"><span class="stat-label"><i aria-hidden="true">✦</i> ONLINE NOW</span><strong id="online-count">—</strong><span class="stat-note">Active connections</span></article>
+      <article class="stat-card"><span class="stat-label"><i aria-hidden="true">⌘</i> COMMANDS RUN</span><strong id="logs-count">—</strong><span class="stat-note">Recorded activity</span></article>
+      <article class="stat-card"><span class="stat-label"><i aria-hidden="true">◷</i> UPTIME</span><strong id="uptime">—</strong><span class="stat-note">Current process</span></article>
+    </section>
+    <section id="activity" class="dashboard-grid" aria-label="Analytics">
+      <article class="card chart-card chart-card-wide">
+        <div class="chart-heading">
+          <div><p class="eyebrow">01 / ACTIVITY · LAST 24 HOURS</p><h2>Commands over time</h2></div>
+          <span class="chart-badge"><i></i> LIVE FEED</span>
+        </div>
+        <div class="chart-canvas chart-canvas-tall"><canvas id="activity-chart" aria-label="Command activity over the last 24 hours" role="img"></canvas></div>
+      </article>
+      <article class="card chart-card">
+        <div class="chart-heading">
+          <div><p class="eyebrow">02 / BREAKDOWN</p><h2>Popular commands</h2></div>
+        </div>
+        <div class="chart-canvas"><canvas id="commands-chart" aria-label="Breakdown of popular commands" role="img"></canvas></div>
+        <p id="commands-empty" class="chart-empty" hidden>No commands have been recorded yet.</p>
+      </article>
+      <article class="card chart-card">
+        <div class="chart-heading">
+          <div><p class="eyebrow">03 / SYSTEM</p><h2>Resource usage</h2></div>
+        </div>
+        <div class="chart-canvas"><canvas id="resources-chart" aria-label="CPU, memory, and disk usage" role="img"></canvas></div>
+        <div class="resource-legend">
+          <span><i class="legend-cpu"></i> CPU <strong id="cpu">—</strong></span>
+          <span><i class="legend-ram"></i> MEMORY <strong id="ram">—</strong></span>
+          <span><i class="legend-disk"></i> DISK <strong id="disk">—</strong></span>
+        </div>
+      </article>
+      <article class="card chart-card">
+        <div class="chart-heading">
+          <div><p class="eyebrow">04 / COMMUNITY</p><h2>Users by country</h2></div>
+        </div>
+        <div class="chart-canvas"><canvas id="countries-chart" aria-label="User breakdown by country" role="img"></canvas></div>
+        <p id="countries-empty" class="chart-empty" hidden>No country information is available yet.</p>
+      </article>
+    </section>
+    <section id="sessions" class="card table-card">
+      <div class="section-heading"><div><p class="eyebrow">05 / SESSIONS</p><h2>WhatsApp users</h2><p class="muted">Connected devices and session controls.</p></div><span class="table-mark" aria-hidden="true">✦</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Number</th><th>Country</th><th>Prefix</th><th>Status</th><th>Created</th><th></th></tr></thead>
+          <tbody id="users-table"><tr><td colspan="6" class="muted">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <section id="logs" class="card table-card">
+      <div class="section-heading"><div><p class="eyebrow">06 / ACTIVITY LOG</p><h2>Recent commands</h2><p class="muted">A trace of recent bot activity.</p></div><span class="table-mark" aria-hidden="true">⌘</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>Number</th><th>Date</th></tr></thead>
+          <tbody id="logs-table"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="/vendor/chart.js" defer></script>
+  <script src="/js/dashboard.js" defer></script>
+</body>
+</html>

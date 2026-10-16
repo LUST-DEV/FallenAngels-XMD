@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <title>Fallen Angels — Sign in</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="intro-screen" aria-hidden="true">
+    <div class="intro-copy">
+      <span class="intro-star">✦</span>
+      <p>WELCOME IN</p>
+      <strong>FALLEN ANGELS</strong>
+      <span class="intro-tagline">BORN TO DIE</span>
+      <span class="intro-tagline-1 " style="margin-top: 1rem;" >Made by Senior's Angels Dev</span>
+    </div>
+  </div>
+  <main class="shell">
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="wordmark" href="/" aria-label="Fallen Angels home"><span aria-hidden="true">✦</span> FALLEN ANGELS</a>
+      <div class="site-nav-links">
+        <a href="#connect">Connect</a>
+        <a href="#commands">Commands</a>
+        <a href="#community">Community</a>
+      </div>
+      <a class="nav-action" href="#connect">Get started <span aria-hidden="true">↗</span></a>
+    </nav>
+    <header class="brand hero">
+      <img class="hero-image" src="/assets/main.jpg" alt="Monochrome Fallen Angel artwork" fetchpriority="high">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-mark"></span> WHATSAPP BOT · XMD</p>
+        <h1 class="hero-title">Fallen<br><span>Angels.</span></h1>
+        <p class="hero-tagline">BORN TO DIE</p>
+        <p class="lede">A quiet interface for your WhatsApp connection, commands, and community.</p>
+        <div class="hero-actions">
+          <a class="button-primary" href="#connect">Connect a device <span aria-hidden="true">↗</span></a>
+          <a class="button-link" href="#commands">Explore commands <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <div class="hero-caption"><span>01 — 02</span><span>FALLEN ANGEL / INK STUDY</span></div>
+    </header>
+
+    <section id="connect" class="connection-section" aria-labelledby="connect-title">
+      <div class="section-intro connection-intro">
+        <p class="eyebrow">YOUR SESSION</p>
+        <h2 id="connect-title" class="section-title">Enter the <span>sanctuary.</span></h2>
+        <p class="muted">Link your WhatsApp device or sign in to manage your bot sessions.</p>
+      </div>
+      <div class="forms" aria-label="Sign in">
+        <form id="pair-form" class="card form-card">
+          <div class="form-card-heading">
+            <span class="card-icon" aria-hidden="true">01</span>
+            <p class="eyebrow">WHATSAPP CONNECTION</p>
+          </div>
+          <h3>Link a device</h3>
+          <p class="muted">Enter your number with its international calling code. Spaces and the + sign are accepted.</p>
+          <label for="numero">Phone number</label>
+          <input id="numero" name="numero" type="tel" inputmode="tel" autocomplete="tel"
+            placeholder="+1 415 555 2671" required>
+          <button type="submit" class="pair-submit">Generate pairing code <span aria-hidden="true">↗</span></button>
+          <p id="pair-message" class="form-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <form id="login-form" class="card form-card admin-card">
+          <div class="form-card-heading">
+            <span class="card-icon" aria-hidden="true">02</span>
+            <p class="eyebrow">PRIVATE ACCESS</p>
+          </div>
+          <h3>Admin sign in</h3>
+          <p class="muted">Review sessions, system health, and bot activity.</p>
+          <label for="password">Dashboard password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+          <button type="submit" class="button-secondary">Open dashboard <span aria-hidden="true">↗</span></button>
+          <p id="login-message" class="form-message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="commands" class="info-section" aria-labelledby="commands-title">
+      <div class="section-intro">
+        <p class="eyebrow">THE GRIMOIRE</p>
+        <h2 id="commands-title" class="section-title">Bot <span>commands</span></h2>
+        <p class="muted">The commands below are available after you link your device. The default prefix is <code>.</code>.</p>
+      </div>
+      <div class="info-grid command-grid">
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">⌘</span>
+          <p class="card-kicker">SYSTEM</p>
+          <h3>Bot status</h3>
+          <p class="muted">Check latency and view session statistics.</p>
+          <p class="command-line"><code>.ping</code><span>alias: .p</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">☷</span>
+          <p class="card-kicker">HELP</p>
+          <h3>Command list</h3>
+          <p class="muted">View available commands and their descriptions.</p>
+          <p class="command-line"><code>.menu</code><span>aliases: .help, .aide</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✧</span>
+          <p class="card-kicker">STICKERS</p>
+          <h3>Create a sticker</h3>
+          <p class="muted">Reply to an image or video. Video stickers are animated and limited to 3 seconds.</p>
+          <p class="command-line"><code>.stickers</code><span>alias : .sticker, .s</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✧</span>
+          <p class="card-kicker">STICKERS TELEGRAM</p>
+          <h3>Import a sticker pack</h3>
+          <p class="muted">Send static or video stickers from a public Telegram pack. Owner only; requires TELEGRAM_BOT_TOKEN in .env. Animated TGS packs are not supported.</p>
+          <p class="command-line"><code>.tg https://t.me/addstickers/pack_name</code><span>maximum: 120 stickers</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✧</span>
+          <p class="card-kicker">INFORMATION</p>
+          <h3>About</h3>
+          <p class="muted">View information about the bot and its version.</p>
+          <p class="command-line"><code>.about</code><span>alias: .botinfo</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">⚙</span>
+          <p class="card-kicker">CUSTOMIZATION</p>
+          <h3>Change the prefix</h3>
+          <p class="muted">Choose a prefix made of 1 to 3 symbols. Owner only.</p>
+          <p class="command-line"><code>.setprefix !</code><span>owner only</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">⌨</span>
+          <p class="card-kicker">CUSTOMIZATION</p>
+          <h3>Typing indicator</h3>
+          <p class="muted">Show “typing…” while the bot prepares a response. Owner only.</p>
+          <p class="command-line"><code>.autotyping on</code><span>.autotyping off to disable</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">❤️</span>
+          <p class="card-kicker">AUTOMATION</p>
+          <h3>React to status updates</h3>
+          <p class="muted">Automatically react with a heart to status updates from your contacts. Owner only; the session must be connected.</p>
+          <p class="command-line"><code>.autoreact on</code><span>.autoreact off · alias: .autoreacr</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">👁</span>
+          <p class="card-kicker">AUTOMATION</p>
+          <h3>Read private messages</h3>
+          <p class="muted">Automatically mark received private messages as read without affecting groups. Owner only; the session must be connected.</p>
+          <p class="command-line"><code>.autoread on</code><span>.autoread off to disable</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✉</span>
+          <p class="card-kicker">BROADCAST</p>
+          <h3>Share a story</h3>
+          <p class="muted">Share text or quoted media to the device’s groups. Owner only.</p>
+          <p class="command-line"><code>.gstories Hello!</code><span>or reply to media · alias: .gstatut</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">♧</span>
+          <p class="card-kicker">GROUPS / MODERATION</p>
+          <h3>Manage members</h3>
+          <p class="muted">Add or remove members, promote or demote admins, open or close the group, and manage warnings. Admin permissions are required; the bot must be an admin to moderate.</p>
+          <p class="command-line"><code>.add / .kick</code><span>.promote · .demote · .open · .close · .warn · .warnings · .resetwarn · .kickall</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">📜</span>
+          <p class="card-kicker">GROUPS / INFORMATION</p>
+          <h3>Info &amp; rules</h3>
+          <p class="muted">View group information and admins, then update the group name, description, or rules.</p>
+          <p class="command-line"><code>.groupinfo</code><span>.admins · .rules · .setrules &lt;text&gt; · .setname &lt;name&gt; · .setdesc &lt;description&gt;</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">📊</span>
+          <p class="card-kicker">POLLS</p>
+          <h3>Create a poll</h3>
+          <p class="muted">Create a WhatsApp single-choice poll with at least two options.</p>
+          <p class="command-line"><code>.poll Question? | Yes | No</code><span>up to 12 options</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✦</span>
+          <p class="card-kicker">SOCIAL</p>
+          <h3>Fun &amp; profiles</h3>
+          <p class="muted">Share a quote or fun fact, check compatibility, or view profile information.</p>
+          <p class="command-line"><code>.quote / .fact</code><span>.ship @person · .profile [@person]</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">♫</span>
+          <p class="card-kicker">MUSIC / MEDIA</p>
+          <h3>TikTok &amp; music</h3>
+          <p class="muted">Download TikTok videos and find a source for a song’s lyrics.</p>
+          <p class="command-line"><code>.tiktok &lt;link&gt;</code><span>.lyrics &lt;title and artist&gt; · opens an authorized lyrics source</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">🔗</span>
+          <p class="card-kicker">GROUPS / MODERATION</p>
+          <h3>Block links</h3>
+          <p class="muted">Delete messages containing links in the group. Group admin permissions are required; the bot must be an admin to enable this and delete messages.</p>
+          <p class="command-line"><code>.antilink on</code><span>.antilink off</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">📷</span>
+          <p class="card-kicker">PROFILE</p>
+          <h3>Profile pictures</h3>
+          <p class="muted">Download a visible profile picture or change the bot’s picture by replying to an image. Changing it is owner only.</p>
+          <p class="command-line"><code>.getpp</code><span>.getpp &lt;number&gt; · .setpp (reply to an image)</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">＠</span>
+          <p class="card-kicker">GROUPS / MENTIONS</p>
+          <h3>Notify the group</h3>
+          <p class="muted">Mention all members, admins only, or the whole group without displaying tags.</p>
+          <p class="command-line"><code>.tagall</code><span>.tagadmin · .hidetag &lt;message&gt;</span></p>
+        </article>
+        <article class="info-card">
+          <span class="card-icon" aria-hidden="true">✦</span>
+          <p class="card-kicker">GROUPS / GREETINGS</p>
+          <h3>Welcome &amp; goodbye</h3>
+          <p class="muted">Customizable default messages for members joining or leaving. Welcome messages include the profile picture, name, group, rules, date, and time. Enable them with .welcome on and .goodbye on.</p>
+          <p class="command-line"><code>.welcome on/off</code><span>.setwelcome &lt;message&gt; · .goodbye on/off · .setgoodbye &lt;message&gt; · variables @name, @group, @rules, @date, @time</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="community" class="info-section community-section" aria-labelledby="community-title">
+      <div class="section-intro">
+        <p class="eyebrow">STAY CONNECTED</p>
+        <h2 id="community-title" class="section-title">Channels &amp; <span>social</span></h2>
+        <p class="muted">Follow project updates and connect with the Fallen Angels community.</p>
+      </div>
+      <div class="info-grid community-grid">
+        <article class="info-card community-card">
+          <span class="card-icon" aria-hidden="true">◉</span>
+          <div><p class="card-kicker">WHATSAPP</p><h3>Official Support</h3></div>
+          <span class="coming-soon"><a href="https://whatsapp.com/channel/0029VbCiqwyBVJl3Jv5T4I15" target="_blank" rel="noopener noreferrer">Join the WhatsApp channel Support</a></span>
+        </article>
+        
+        <article class="info-card community-card">
+          <span class="card-icon" aria-hidden="true">‌ ✞</span>
+          <div><p class="card-kicker">SOCIAL MEDIA</p><h3>Telegram &amp; groups</h3></div>
+          <span class="coming-soon"><a href="https://t.me/+PImVLCQ_KRM0MWJh" target="_blank" rel="noopener noreferrer">Join the Telegram group</a></span>
+        </article>
+
+        <article class="info-card community-card">
+          <span class="card-icon" aria-hidden="true">‌╋━ </span>
+          <div><p class="card-kicker">SOCIAL MEDIA</p><h3>Telegram &amp; Canal</h3></div>
+          <span class="coming-soon"><a href="https://t.me/Fallen_AngelSupport" target="_blank" rel="noopener noreferrer">Join the Telegram channel</a></span>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <span>One connection at a time. Your credentials stay private.</span>
+      <span class="credit">Made By <strong>Senior's Angels Dev</strong></span>
+    </footer>
+  </main>
+    <audio id="site-music" autoplay loop preload="auto">
+      <source src="audio/Streets (slowed + reverb)   TommyMuzzic.m4a" type="audio/mpeg">
+    </audio>
+    <button id="music-toggle" class="music-toggle" type="button" aria-label="Play music" aria-pressed="false">
+      <span class="music-indicator" aria-hidden="true">♪</span>
+      <span id="music-toggle-label">Play music</span>
+    </button>
+    <script src="/js/music.js" defer></script>
+    <script src="/js/pair.js" defer></script>
+</body>
+</html>
