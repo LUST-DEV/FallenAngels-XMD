@@ -1,5 +1,7 @@
+const config = require('../config')
+
 const NEWSLETTER_INFO = {
-  newsletterJid: '120363432013190547@newsletter',
+  newsletterJid: config.whatsappNewsletterJid,
   newsletterName: 'Fallen X Angels',
   serverMessageId: 1,
 }
@@ -10,7 +12,7 @@ function withNewsletterContext(sock) {
       const value = Reflect.get(target, property, target)
       if (property === 'sendMessage') {
         return (jid, content, options) => {
-          if (!content || typeof content !== 'object' || content.react || content.delete) {
+          if (!content || typeof content !== 'object' || content.react || content.delete || content.sticker) {
             return target.sendMessage(jid, content, options)
           }
 

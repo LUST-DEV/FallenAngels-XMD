@@ -9,6 +9,7 @@ module.exports = {
     botName: "𝐅ᴀʟʟᴇɴ ✘ 𝐀ɴɢᴇʟs",
     port: Number(process.env.PORT) || 3000,
     whatsappConnectTimeoutMs: Number(process.env.WHATSAPP_CONNECT_TIMEOUT_MS) || 60000,
+    whatsappNewsletterJid: '120363432013190547@newsletter',
     adminPassword: process.env.ADMIN_PASSWORD || '',
     defaultPrefix: process.env.DEFAULT_PREFIX || '.',
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN || '',

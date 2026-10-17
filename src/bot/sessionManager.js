@@ -20,9 +20,23 @@ const { enforceGroupSlowmode } = require('./slowmode')
 const sessions = new Map() // numero -> socket
 const reconnectTimers = new Map()
 const reconnectAttempts = new Map()
+const restartOperations = new Map()
+const newsletterFollowOperations = new Map()
 const MAX_RECONNECT_DELAY_MS = 60_000
 
 const sessionDir = (numero) => path.join(config.sessionsDir, numero)
+
+function hasRegisteredAuth(numero) {
+  const credsPath = path.join(sessionDir(numero), 'creds.json')
+  if (!fs.existsSync(credsPath)) return false
+
+  try {
+    return JSON.parse(fs.readFileSync(credsPath, 'utf8')).registered === true
+  } catch (error) {
+    logger.error({ numero, err: error }, 'impossible de lire les identifiants WhatsApp')
+    throw new Error(`Unable to read WhatsApp credentials for ${numero}.`, { cause: error })
+  }
+}
 
 function isBotMentioned(msg, sock) {
   const content = normalizeMessageContent(msg.message || {})
@@ -59,6 +73,7 @@ function scheduleReconnect(numero) {
     if (!sessions.has(numero)) {
       startSession(numero).catch((error) => {
         logger.error({ numero, err: error }, 'échec de reconnexion')
+        scheduleReconnect(numero)
       })
     }
   }, delay)
@@ -67,6 +82,43 @@ function scheduleReconnect(numero) {
 
 function removeAuth(numero) {
   fs.rmSync(sessionDir(numero), { recursive: true, force: true })
+}
+
+async function updateConnectionStatus(numero, status) {
+  try {
+    await User.update({ status }, { where: { numero } })
+  } catch (error) {
+    logger.error({ numero, status, err: error }, 'échec de mise à jour du statut de connexion')
+  }
+}
+
+async function followNewsletterOnce(numero, sock) {
+  const newsletterJid = config.whatsappNewsletterJid
+  if (!/^\d+@newsletter$/.test(newsletterJid)) {
+    throw new Error(`Invalid WhatsApp newsletter JID: ${newsletterJid}`)
+  }
+
+  const markerPath = path.join(
+    sessionDir(numero),
+    `newsletter-followed-${encodeURIComponent(newsletterJid)}.json`,
+  )
+  if (fs.existsSync(markerPath)) return
+  if (newsletterFollowOperations.has(numero)) return newsletterFollowOperations.get(numero)
+
+  const operation = (async () => {
+    await sock.newsletterFollow(newsletterJid)
+    fs.writeFileSync(markerPath, JSON.stringify({ newsletterJid }), { flag: 'wx' })
+    logger.info({ numero, newsletterJid }, 'abonnement automatique à la chaîne WhatsApp effectué')
+  })()
+
+  newsletterFollowOperations.set(numero, operation)
+  try {
+    await operation
+  } finally {
+    if (newsletterFollowOperations.get(numero) === operation) {
+      newsletterFollowOperations.delete(numero)
+    }
+  }
 }
 
 function isPermanentAuthFailure(code) {
@@ -128,13 +180,20 @@ async function startSession(numero) {
 
   sock.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
     if (connection === 'open') {
+      if (sock.stopped || sessions.get(numero) !== sock) return
       reconnectAttempts.delete(numero)
-      await User.update({ status: 'connected' }, { where: { numero } })
+      await updateConnectionStatus(numero, 'connected')
       logger.info({ numero }, 'session connectée ✅')
+      followNewsletterOnce(numero, sock).catch((error) => {
+        logger.error(
+          { numero, newsletterJid: config.whatsappNewsletterJid, err: error },
+          'échec de l’abonnement automatique à la chaîne WhatsApp',
+        )
+      })
     }
 
     if (connection === 'close') {
-      if (sock.stopped) return // arrêt volontaire, on ne relance pas
+      if (sock.stopped || sessions.get(numero) !== sock) return // arrêt volontaire ou ancien socket
       sessions.delete(numero)
 
       const code = lastDisconnect?.error?.output?.statusCode
@@ -143,7 +202,7 @@ async function startSession(numero) {
 
       if (isPermanentAuthFailure(code)) {
         removeAuth(numero)
-        await User.update({ status: 'disconnected' }, { where: { numero } })
+        await updateConnectionStatus(numero, 'disconnected')
         logger.warn(
           { numero, code, err: disconnectError?.message, details: disconnectError?.output?.payload },
           'identifiants WhatsApp invalides ou révoqués, session supprimée',
@@ -151,8 +210,8 @@ async function startSession(numero) {
         return
       }
 
-      await User.update({ status: 'disconnected' }, { where: { numero } })
       if (!registered) {
+        await updateConnectionStatus(numero, 'disconnected')
         logger.warn(
           { numero, code, err: disconnectError?.message, details: disconnectError?.output?.payload },
           'connexion de pairing interrompue; identifiants conservés, une nouvelle demande de code est possible',
@@ -162,6 +221,7 @@ async function startSession(numero) {
 
       logger.info({ numero, code }, 'connexion interrompue; les identifiants sont conservés')
       scheduleReconnect(numero)
+      await updateConnectionStatus(numero, 'disconnected')
     }
   })
 
@@ -333,6 +393,75 @@ async function stopSession(numero, { logout = false } = {}) {
   }
 }
 
+async function restartSession(numero) {
+  if (restartOperations.has(numero)) return restartOperations.get(numero)
+
+  const operation = (async () => {
+    if (!hasRegisteredAuth(numero)) {
+      const error = new Error(`No linked WhatsApp session exists for ${numero}.`)
+      error.status = 409
+      throw error
+    }
+
+    await stopSession(numero)
+    try {
+      await updateConnectionStatus(numero, 'disconnected')
+      await startSession(numero)
+      return { numero, status: 'restarting' }
+    } catch (error) {
+      scheduleReconnect(numero)
+      throw error
+    }
+  })()
+
+  restartOperations.set(numero, operation)
+  try {
+    return await operation
+  } finally {
+    if (restartOperations.get(numero) === operation) restartOperations.delete(numero)
+  }
+}
+
+async function restartAllSessions() {
+  const users = await User.findAll({ attributes: ['numero'], raw: true })
+  const numbers = []
+  const failures = []
+  let skipped = 0
+
+  for (const user of users) {
+    try {
+      if (hasRegisteredAuth(user.numero)) {
+        numbers.push(user.numero)
+      } else {
+        skipped++
+      }
+    } catch (error) {
+      failures.push({ numero: user.numero, error: error.message })
+    }
+  }
+
+  let nextIndex = 0
+  const workerCount = Math.min(3, numbers.length)
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (nextIndex < numbers.length) {
+      const numero = numbers[nextIndex++]
+      try {
+        await restartSession(numero)
+      } catch (error) {
+        logger.error({ numero, err: error }, 'échec du redémarrage de session')
+        failures.push({ numero, error: error.message })
+      }
+    }
+  }))
+
+  const failedNumbers = new Set(failures.map((failure) => failure.numero))
+  return {
+    restarted: numbers.filter((numero) => !failedNumbers.has(numero)).length,
+    skipped,
+    failed: failures,
+  }
+}
+
 // Au démarrage : relance toutes les sessions déjà liées
 async function restoreSessions() {
   const users = await User.findAll()
@@ -358,4 +487,4 @@ async function restoreSessions() {
   logger.info(`${i} session(s) à restaurer`)
 }
 
-module.exports = { sessions, startSession, stopSession, restoreSessions }
+module.exports = { sessions, startSession, stopSession, restartSession, restartAllSessions, restoreSessions }

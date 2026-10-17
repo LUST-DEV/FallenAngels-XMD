@@ -7,6 +7,38 @@ function showError(error) {
   message.classList.add('error')
 }
 
+async function restartConnections(url, confirmMessage, button, all = false) {
+  if (!window.confirm(confirmMessage)) return
+
+  button.disabled = true
+  message.textContent = ''
+  message.classList.remove('error')
+  try {
+    const response = await fetch(url, { method: 'POST' })
+    const result = await response.json()
+    if (response.status === 401) {
+      window.location.replace('/')
+      return
+    }
+    if (!response.ok) throw new Error(result.error || 'Unable to restart the session.')
+
+    if (all) {
+      const failed = result.failed || []
+      message.textContent = failed.length
+        ? `Restart initiated for ${result.restarted} session(s); failed: ${failed.map((item) => item.numero).join(', ')}${result.skipped ? `; ${result.skipped} skipped` : ''}.`
+        : `Restart initiated for ${result.restarted} session(s)${result.skipped ? `; ${result.skipped} skipped` : ''}.`
+      if (failed.length) message.classList.add('error')
+    } else {
+      message.textContent = `Restart initiated for ${result.numero}.`
+    }
+    await loadDashboard()
+  } catch (error) {
+    showError(error)
+  } finally {
+    button.disabled = false
+  }
+}
+
 function cell(row, value, className) {
   const td = document.createElement('td')
   td.textContent = value ?? ''
@@ -253,21 +285,41 @@ async function loadDashboard() {
     status.setAttribute('aria-label', user.online ? 'Online' : 'Offline')
     cell(row, new Date(user.createdAt).toLocaleString('en-US'))
     const actionCell = row.insertCell()
+    const actions = document.createElement('div')
+    actions.className = 'session-actions'
+    const restart = document.createElement('button')
+    restart.className = 'session-action-button'
+    restart.type = 'button'
+    restart.textContent = 'Restart'
+    restart.addEventListener('click', () => restartConnections(
+      `/api/users/${encodeURIComponent(user.numero)}/restart`,
+      `Restart the WhatsApp session for ${user.numero}?`,
+      restart,
+    ))
     const remove = document.createElement('button')
     remove.className = 'danger-button'
     remove.type = 'button'
-    remove.textContent = 'Disconnect'
+    remove.textContent = 'Remove'
     remove.addEventListener('click', async () => {
       if (!window.confirm(`Disconnect and remove ${user.numero}?`)) return
-      const response = await fetch(`/api/users/${encodeURIComponent(user.numero)}`, { method: 'DELETE' })
-      if (!response.ok) {
+      remove.disabled = true
+      try {
+        const response = await fetch(`/api/users/${encodeURIComponent(user.numero)}`, { method: 'DELETE' })
         const result = await response.json()
-        showError(new Error(result.error || 'Unable to remove the session.'))
-        return
+        if (response.status === 401) {
+          window.location.replace('/')
+          return
+        }
+        if (!response.ok) throw new Error(result.error || 'Unable to remove the session.')
+        await loadDashboard()
+      } catch (error) {
+        showError(error)
+      } finally {
+        remove.disabled = false
       }
-      await loadDashboard()
     })
-    actionCell.append(remove)
+    actions.append(restart, remove)
+    actionCell.append(actions)
   }
 
   const logsTable = document.querySelector('#logs-table')
@@ -283,6 +335,15 @@ async function loadDashboard() {
     cell(row, new Date(log.createdAt).toLocaleString('en-US'))
   }
 }
+
+document.querySelector('#restart-all').addEventListener('click', (event) => {
+  restartConnections(
+    '/api/users/restart-all',
+    'Restart every linked WhatsApp session? Connections may be briefly offline.',
+    event.currentTarget,
+    true,
+  )
+})
 
 document.querySelector('#logout').addEventListener('click', async () => {
   await fetch('/api/auth/logout', { method: 'POST' })

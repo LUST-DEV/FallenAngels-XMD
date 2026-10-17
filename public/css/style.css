@@ -506,6 +506,7 @@ footer {
 .section-heading h2, .table-card > h2 { margin-bottom: 5px; font: 24px var(--serif); }
 .section-heading .muted { margin: 0; font-size: 11px; }
 .table-mark { color: #b1b1aa; font: 23px var(--serif); }
+.section-actions, .session-actions { display: flex; align-items: center; gap: 8px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
 th { color: #777772; font: 600 8px "Segoe UI", Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
@@ -516,6 +517,9 @@ tbody tr:hover { background: #fafaf8; }
 .status { display: inline-flex; align-items: center; gap: 7px; }
 .status::before { width: 6px; height: 6px; border-radius: 50%; background: #a5a59e; content: ""; }
 .status.online::before { background: #477752; }
+.session-action-button { width: auto; min-height: 32px; margin: 0; padding: 0 10px; color: #292925; border: 1px solid #d9d9d3; background: #fff; font-size: 9px; }
+.session-action-button:hover { color: #fff; border-color: #494943; background: #494943; }
+.section-actions > .session-action-button { min-height: 36px; }
 .danger-button { width: auto; min-height: 32px; margin: 0; padding: 0 10px; color: #9d4545; border-color: #e3cccc; background: #fff; font-size: 9px; }
 .danger-button:hover { color: #fff; border-color: #9d4545; background: #9d4545; }
 .empty { padding: 20px 12px; color: var(--muted); }
